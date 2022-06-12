@@ -1,16 +1,23 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
+
+	"github.com/lafusew/cc/controllers"
 )
 
+var port = 8080;
+
 func main() {
-	transactionsHandlers := newTransactionHandlers()
+	transactionsHandlers := controllers.NewTransactionHandlers()
 
-	http.HandleFunc("/transactions", transactionsHandlers.transactions)
-	http.HandleFunc("/transaction/", transactionsHandlers.transaction)
+	http.HandleFunc("/transactions/", transactionsHandlers.HandleTransactions)
+	http.HandleFunc("/transactions", transactionsHandlers.HandleTransactions)
 
-	err := http.ListenAndServe(":8080", nil)
+	log.Printf("Server starting on port: %d\n", port)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		panic(err)
 	}
