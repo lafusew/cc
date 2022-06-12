@@ -21,7 +21,7 @@ type Account struct {
 	User      User
 	CoinID    uuid.UUID `gorm:"not null" json:"coin_id"`
 	Coin      Coin
-	Authority AccountAuthority `gorm:"not null" json:"authority"`
+	Authority AccountAuthority `gorm:"type:account_authority; not null" json:"authority"`
 	Balance   uint             `gorm:"not null" json:"balance"`
 	Scale     uint             `gorm:"not null" json:"scale"`
 }

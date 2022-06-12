@@ -17,7 +17,7 @@ type Auth struct {
 	ID       uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
 	Username string    `gorm:"size:50; not null" json:"username"`
 	Password string    `gorm:"size:50; not null" json:"password"`
-	Type     AuthType  `gorm:"not null" json:"auth_type"`
+	Type     AuthType  `gorm:"type:auth_type; not null" json:"auth_type"`
 	UserID   uint      `gorm:"not null" json:"user_id"`
 	User     User
 }
