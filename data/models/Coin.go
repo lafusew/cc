@@ -1,9 +1,13 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type Coin struct {
 	gorm.Model
+	ID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
 	Name                string `gorm:"size:18; not null" json:"name"`
 	ProfilePicture      string `gorm:"size:200; not null" json:"profile_picture"`
 	TokenName           string `gorm:"size:4; not null" json:"token_name"`

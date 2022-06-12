@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type AccountAuthority string
 
@@ -12,9 +15,12 @@ const (
 
 type Account struct {
 	gorm.Model
-	Name      string           `gorm:"size:18; not null" json:"name"`
-	UserID    uint             `gorm:"not null" json:"user_id"`
-	CoinID    uint             `gorm:"not null" json:"coin_id"`
+	ID        uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
+	Name      string    `gorm:"size:18; not null" json:"name"`
+	UserID    uuid.UUID `gorm:"not null" json:"user_id"`
+	User      User
+	CoinID    uuid.UUID `gorm:"not null" json:"coin_id"`
+	Coin      Coin
 	Authority AccountAuthority `gorm:"not null" json:"authority"`
 	Balance   uint             `gorm:"not null" json:"balance"`
 	Scale     uint             `gorm:"not null" json:"scale"`

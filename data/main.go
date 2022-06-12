@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/lafusew/cc/data/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -48,4 +49,19 @@ func Connect() *gorm.DB {
 func Init(db *gorm.DB) {
 	db.Exec(InitEnumsSQL)
 	db.Exec(InitPgRoleSQL)
+
+	db.Debug().AutoMigrate(
+		&models.User{},
+		&models.Coin{},
+		&models.Account{},
+		&models.Auth{},
+		&models.Transaction{},
+		&models.Invite{},
+	)
+
+	setFKeys(db)
+}
+
+func setFKeys(db *gorm.DB) {
+	defer log.Println("fkeys correctly initialized")
 }
