@@ -55,3 +55,16 @@ func (c *Controller) PutUser(u *models.User, idString string) *models.User {
 
 	return u
 }
+
+func (c *Controller) DeleteUser(u* models.User, idString string) error {
+	id, err := uuid.Parse(idString)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	err = u.Delete(c.Db, id)
+
+	return err 
+}
+

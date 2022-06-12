@@ -75,11 +75,20 @@ func (c *Controller) HandleUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	case "PUT":
 		parts := strings.Split(r.URL.Path, "/")
-		u := &models.User{
-			Tag: "7777",
-		}
+		u := &models.User{}
+		c.JsonToModel(r, w, u)
 
-		c.PutUser(u, parts[2])
+		u = c.PutUser(u, parts[2])
+		c.JsonResponse(w, u)
+		return
+	case "DELETE":
+		parts := strings.Split(r.URL.Path, "/")
+		u := &models.User{}
+		c.DeleteUser(u, parts[2])
+		c.JsonResponse(w, map[string]interface{} {
+			"deleted": true,
+		})
+		return
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		w.Write([]byte("method not allowed"))

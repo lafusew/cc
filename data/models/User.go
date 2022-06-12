@@ -48,3 +48,7 @@ func (u *User) FindAll(db *gorm.DB, pagination int, limit int) (*[]User, error) 
 
 	return &users, err
 }
+
+func (u *User) Delete(db *gorm.DB, id uuid.UUID) (error) {
+	return db.Delete(u, id).Error
+}
