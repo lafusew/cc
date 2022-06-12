@@ -1,5 +1,8 @@
 # Central Coin
 
+Did you ever wanted to feel like the **Feds** or any **central bank**? We're here for you.  
+Print some currency out of thin air using **Central Coin**. A platform where anyone can create a **worthless currency**, invite friends and start trading it together.
+
 ## API Routes 
 
 ### Auth
