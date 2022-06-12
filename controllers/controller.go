@@ -1,9 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
+	"github.com/lafusew/cc/data/models"
 	"gorm.io/gorm"
 )
 
@@ -11,24 +15,76 @@ type Controller struct {
 	Db *gorm.DB
 }
 
-func (c *Controller) HandleTransactions(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(r.URL.Path, "/")
+func (c *Controller) JsonToModel(r *http.Request, w http.ResponseWriter, v interface{}) {
+	bodyBytes, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
 
+	ct := r.Header.Get("content-type")
+	if ct != "application/json" {
+		w.WriteHeader(http.StatusUnsupportedMediaType)
+		w.Write([]byte(fmt.Sprintf("need content-type 'application/json', but got '%s'", ct)))
+		return
+	}
+
+
+	err = json.Unmarshal(bodyBytes, &v)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+}
+
+func (c *Controller) JsonResponse(w http.ResponseWriter, v interface{}) {
+	jsonBytes, err := json.Marshal(v)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+
+	w.Header().Add("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonBytes)
+}
+
+func (c *Controller) HandleUsers(w http.ResponseWriter, r *http.Request) {
+	
 	switch r.Method {
 	case "GET":
+		parts := strings.Split(r.URL.Path, "/")
 		if parts[len(parts)-1] == "" {
-			c.GetAllTransactions(w, r)
+			users := c.GetAllUsers(0)
+			c.JsonResponse(w, users)
 			return
 		}
 
-		c.GetTransaction(w, r)
+		u := c.GetUserById(parts[2])
+		c.JsonResponse(w, u)
 		return
 	case "POST":
-		c.PostTransaction(w, r)
+		u := &models.User{}
+		c.JsonToModel(r, w, u)
+		u = c.PostUser(u)
+
+		c.JsonResponse(w, u)
 		return
+	case "PUT":
+		parts := strings.Split(r.URL.Path, "/")
+		u := &models.User{
+			Tag: "7777",
+		}
+
+		c.PutUser(u, parts[2])
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		w.Write([]byte("method not allowed"))
 		return
 	}
 }
+
+
