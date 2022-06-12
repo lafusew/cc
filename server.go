@@ -12,11 +12,13 @@ import (
 var port = 8080
 
 func main() {
-	c := controllers.Controller{
-		Db: data.Connect(true),
+	db := data.Connect(true)
+
+	uController := controllers.UserController {
+		Db: db,
 	}
 
-	http.HandleFunc("/users/", c.HandleUsers)
+	http.HandleFunc("/users/", uController.HandleUsers)
 
 	log.Printf("Server starting on port: %d\n", port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
