@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Connect() *gorm.DB {
+func Connect(init bool) *gorm.DB {
 	var err error
 	var database *gorm.DB
 
@@ -43,10 +43,14 @@ func Connect() *gorm.DB {
 		log.Printf("Connected to %s, with user %s", db, user)
 	}
 
+	if init {
+		migrate(database)
+	}
+
 	return database
 }
 
-func Init(db *gorm.DB) {
+func migrate(db *gorm.DB) {
 	db.Exec(InitEnumsSQL)
 	db.Exec(InitPgRoleSQL)
 
@@ -58,10 +62,4 @@ func Init(db *gorm.DB) {
 		&models.Transaction{},
 		&models.Invite{},
 	)
-
-	setFKeys(db)
-}
-
-func setFKeys(db *gorm.DB) {
-	defer log.Println("fkeys correctly initialized")
 }

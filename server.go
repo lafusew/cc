@@ -9,14 +9,15 @@ import (
 	"github.com/lafusew/cc/data"
 )
 
-var c = controllers.Controller{}
+
 var port = 8080
 
 func main() {
-	c.Db = data.Connect()
-	data.Init(c.Db)
+	c := controllers.Controller{
+		Db:	data.Connect(true),
+	}
 
-	http.HandleFunc("/transactions/", c.HandleTransactions)
+	http.HandleFunc("/users/", c.HandleUsers)
 
 	log.Printf("Server starting on port: %d\n", port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
