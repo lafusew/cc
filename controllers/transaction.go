@@ -13,12 +13,12 @@ import (
 )
 
 type Transaction struct {
-	Label  string `json:"label"`
-	ID     string `json:"id"`
-	From   string `json:"from"`
-	To     string `json:"to"`
-	Amount int `json:"amount"`
-	Scale int `json:"scale"`
+	Label  string    `json:"label"`
+	ID     string    `json:"id"`
+	From   string    `json:"from"`
+	To     string    `json:"to"`
+	Amount int       `json:"amount"`
+	Scale  int       `json:"scale"`
 	Date   time.Time `json:"date"`
 }
 

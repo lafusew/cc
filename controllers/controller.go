@@ -16,11 +16,11 @@ func (c *Controller) HandleTransactions(w http.ResponseWriter, r *http.Request) 
 
 	switch r.Method {
 	case "GET":
-		if parts[len(parts) - 1] == "" {
+		if parts[len(parts)-1] == "" {
 			c.GetAllTransactions(w, r)
 			return
-		} 
-			
+		}
+
 		c.GetTransaction(w, r)
 		return
 	case "POST":
