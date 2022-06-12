@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,43 +22,8 @@ type Transaction struct {
 	Date   time.Time `json:"date"`
 }
 
-type TransactionsHandlers struct {
-	sync.Mutex
-	store map[string]Transaction
-}
-
-func (h *TransactionsHandlers) HandleTransactions(w http.ResponseWriter, r *http.Request) {
-	parts := strings.Split(r.URL.Path, "/")
-
-	switch r.Method {
-	case "GET":
-		if parts[len(parts) - 1] == "" {
-			h.GetAllTransactions(w, r)
-			return
-		} 
-			
-		h.GetTransaction(w, r)
-		return
-	case "POST":
-		h.PostTransaction(w, r)
-		return
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("method not allowed"))
-		return
-	}
-}
-
-func (h *TransactionsHandlers) GetAllTransactions(w http.ResponseWriter, r *http.Request) {
-	transactions := make([]Transaction, len(h.store))
-
-	h.Lock()
-	i := 0
-	for _, transaction := range h.store {
-		transactions[i] = transaction;
-		i++
-	}
-	h.Unlock()
+func (c *Controller) GetAllTransactions(w http.ResponseWriter, r *http.Request) {
+	transactions := make([]Transaction, 10)
 
 	jsonBytes, err := json.Marshal(transactions)
 	if err != nil {
@@ -72,12 +36,12 @@ func (h *TransactionsHandlers) GetAllTransactions(w http.ResponseWriter, r *http
 	w.Write(jsonBytes)
 }
 
-func (h *TransactionsHandlers) GetTransaction(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetTransaction(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.Path, "/")
 	fmt.Sprintln(parts)
 }
 
-func (h *TransactionsHandlers) PostTransaction(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) PostTransaction(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -105,25 +69,5 @@ func (h *TransactionsHandlers) PostTransaction(w http.ResponseWriter, r *http.Re
 	transaction.Date = time.Now()
 
 	log.Printf("New transaction registered with id: %s", transaction.ID)
-
-	h.Lock()
-	defer h.Unlock()
-
-	h.store[transaction.ID] = transaction
-}
-
-func NewTransactionHandlers() *TransactionsHandlers {
-	return &TransactionsHandlers{
-		store: map[string]Transaction{
-			"id1": {
-				Label: "First transaction",
-				ID: uuid.New().String(),
-				From: uuid.New().String(),
-				To: uuid.New().String(),
-				Amount: 12,
-				Scale: 0,
-				Date: time.Now(),
-			},
-		},
-	}
+	log.Println(transaction)
 }

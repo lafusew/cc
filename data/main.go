@@ -9,12 +9,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type ORM struct {
-	DB *gorm.DB
-}
-
-func (orm *ORM)Connect() {
+func Connect() *gorm.DB {
 	var err error
+	var database *gorm.DB
 
 	_, ok := os.LookupEnv("DATABASE_HOST")
 	if !ok {
@@ -22,10 +19,10 @@ func (orm *ORM)Connect() {
 	}
 
 	var (
-		host = os.Getenv("DATABASE_HOST")
-		port = "5432"
-		user = os.Getenv("POSTGRES_USER")
-		db = os.Getenv("POSTGRES_DB")
+		host     = os.Getenv("DATABASE_HOST")
+		port     = "5432"
+		user     = os.Getenv("POSTGRES_USER")
+		db       = os.Getenv("POSTGRES_DB")
 		password = os.Getenv("POSTGRES_PASSWORD")
 	)
 
@@ -34,7 +31,7 @@ func (orm *ORM)Connect() {
 		host, port, user, db, password,
 	)
 
-	orm.DB, err = gorm.Open(postgres.New(postgres.Config{
+	database, err = gorm.Open(postgres.New(postgres.Config{
 		DSN: url,
 	}))
 
@@ -44,5 +41,11 @@ func (orm *ORM)Connect() {
 	} else {
 		log.Printf("Connected to %s, with user %s", db, user)
 	}
-	
+
+	return database
+}
+
+func Init(db *gorm.DB) {
+	db.Exec(InitEnumsSQL)
+	db.Exec(InitPgRoleSQL)
 }
