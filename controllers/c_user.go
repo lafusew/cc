@@ -13,7 +13,7 @@ func (c *Controller) GetUserById(idString string) *models.User {
 		log.Println(err)
 		return nil
 	}
-	var u = &models.User{ ID: id }
+	var u = &models.User{ID: id}
 
 	u, err = u.FindById(c.Db, u.ID)
 	if err != nil {
@@ -56,7 +56,7 @@ func (c *Controller) PutUser(u *models.User, idString string) *models.User {
 	return u
 }
 
-func (c *Controller) DeleteUser(u* models.User, idString string) error {
+func (c *Controller) DeleteUser(u *models.User, idString string) error {
 	id, err := uuid.Parse(idString)
 	if err != nil {
 		log.Println(err)
@@ -65,6 +65,5 @@ func (c *Controller) DeleteUser(u* models.User, idString string) error {
 
 	err = u.Delete(c.Db, id)
 
-	return err 
+	return err
 }
-

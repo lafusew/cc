@@ -31,7 +31,6 @@ func (c *Controller) JsonToModel(r *http.Request, w http.ResponseWriter, v inter
 		return
 	}
 
-
 	err = json.Unmarshal(bodyBytes, &v)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -53,7 +52,6 @@ func (c *Controller) JsonResponse(w http.ResponseWriter, v interface{}) {
 }
 
 func (c *Controller) HandleUsers(w http.ResponseWriter, r *http.Request) {
-	
 	switch r.Method {
 	case "GET":
 		parts := strings.Split(r.URL.Path, "/")
@@ -85,7 +83,7 @@ func (c *Controller) HandleUsers(w http.ResponseWriter, r *http.Request) {
 		parts := strings.Split(r.URL.Path, "/")
 		u := &models.User{}
 		c.DeleteUser(u, parts[2])
-		c.JsonResponse(w, map[string]interface{} {
+		c.JsonResponse(w, map[string]interface{}{
 			"deleted": true,
 		})
 		return
@@ -95,5 +93,3 @@ func (c *Controller) HandleUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-
-

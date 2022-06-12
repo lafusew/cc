@@ -9,12 +9,11 @@ import (
 	"github.com/lafusew/cc/data"
 )
 
-
 var port = 8080
 
 func main() {
 	c := controllers.Controller{
-		Db:	data.Connect(true),
+		Db: data.Connect(true),
 	}
 
 	http.HandleFunc("/users/", c.HandleUsers)
