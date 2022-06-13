@@ -7,6 +7,7 @@ Print some currency out of thin air using **Central Coin**. A platform where any
 
 - [ ] Data Validation before SQL query
 - [ ] Controllers
+- [ ] Error handling + appropriated status code and response
 - [ ] JWT Auth
 - [ ] Socket for New Transaction Emission
 
