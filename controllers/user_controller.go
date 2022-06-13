@@ -21,9 +21,10 @@ func (c *UserController) HandleUsers(w http.ResponseWriter, r *http.Request) {
 		
 		parts := strings.Split(r.URL.Path, "/")
 		if parts[len(parts)-1] == "" {
-			users := &[]models.User{}
-			
-			c.GetAllUsers(users, 0)
+			users, err := c.GetAllUsers(0)
+			if err != nil {
+				utils.JsonResponse(w, err.Error())
+			}
 			
 			utils.JsonResponse(w, users)
 			return
@@ -95,14 +96,14 @@ func (c *UserController) GetUserById(u *models.User, idString string) error {
 	return err
 }
 
-func (c *UserController) GetAllUsers(us *[]models.User, pagination int) error {
+func (c *UserController) GetAllUsers(pagination int) (*[]models.User, error) {
 	u := &models.User{}
-	err := u.FindAll(c.Db, us, pagination, 100)
+	us, err := u.FindAll(c.Db, pagination, 100)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return err
+	return us, err
 }
 
 func (c *UserController) PostUser(u *models.User) error {

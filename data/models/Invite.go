@@ -17,3 +17,22 @@ type Invite struct {
 	Message  string    `gorm:"size:200; not null" json:"message"`
 	ExpireAt time.Time `gorm:"not null" json:"expire_at"`
 }
+
+func (a *Invite) Create(db *gorm.DB, uId, cId uuid.UUID) error {
+	a.To = cId
+	a.From = uId
+
+	return db.Create(&a).Take(&a).Error
+}
+
+func (a *Invite) Update(db *gorm.DB, id uuid.UUID) error {
+	return db.Model(&Invite{}).Where("id = ?", id).Updates(a).Take(&a).Error
+}
+
+func (a *Invite) FindById(db *gorm.DB, id uuid.UUID) error {
+	return db.Model(&Invite{}).Where("id = ?", id).Take(&a).Error
+}
+
+func (a *Invite) Delete(db *gorm.DB, id uuid.UUID) error {
+	return db.Delete(a, id).Error
+}

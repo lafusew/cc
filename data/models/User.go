@@ -15,39 +15,22 @@ type User struct {
 }
 
 func (u *User) Create(db *gorm.DB) error {
-	err := db.Create(&u).Take(&u).Error
-	if err != nil {
-		return err
-	}
-
-	return err
+	return db.Create(&u).Take(&u).Error
 }
 
 func (u *User) Update(db *gorm.DB, id uuid.UUID) error {
-	err := db.Model(&User{}).Where("id = ?", id).Updates(u).Take(&u).Error
-	if err != nil {
-		return err
-	}
-
-	return err
+	return db.Model(&User{}).Where("id = ?", id).Updates(u).Take(&u).Error
 }
 
 func (u *User) FindById(db *gorm.DB, id uuid.UUID) error {
-	err := db.Model(User{}).Where("id = ?", id).Take(&u).Error
-	if err != nil {
-		return err
-	}
-
-	return err
+	return db.Model(User{}).Where("id = ?", id).Take(&u).Error
 }
 
-func (u *User) FindAll(db *gorm.DB, us *[]User, pagination int, limit int) error {
+func (u *User) FindAll(db *gorm.DB, pagination int, limit int) (*[]User, error) {
+	us := &[]User{}
 	err := db.Debug().Model(&User{}).Limit(limit).Offset(pagination * limit).Find(&us).Error
-	if err != nil {
-		return err
-	}
 
-	return err
+	return us, err
 }
 
 func (u *User) Delete(db *gorm.DB, id uuid.UUID) error {
