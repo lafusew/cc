@@ -5,11 +5,12 @@ import (
 	"log"
 	"os"
 
+	"github.com/lafusew/cc/data/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func Connect() *gorm.DB {
+func Connect(init bool) *gorm.DB {
 	var err error
 	var database *gorm.DB
 
@@ -42,10 +43,23 @@ func Connect() *gorm.DB {
 		log.Printf("Connected to %s, with user %s", db, user)
 	}
 
+	if init {
+		migrate(database)
+	}
+
 	return database
 }
 
-func Init(db *gorm.DB) {
+func migrate(db *gorm.DB) {
 	db.Exec(InitEnumsSQL)
 	db.Exec(InitPgRoleSQL)
+
+	db.Debug().AutoMigrate(
+		&models.User{},
+		&models.Coin{},
+		&models.Account{},
+		&models.Auth{},
+		&models.Transaction{},
+		&models.Invite{},
+	)
 }
