@@ -14,39 +14,40 @@ type User struct {
 	Desc           string    `gorm:"size:255;" json:"desc"`
 }
 
-func (u *User) Create(db *gorm.DB) (*User, error) {
-	err := db.Create(&u).Error
+func (u *User) Create(db *gorm.DB) error {
+	err := db.Create(&u).Take(&u).Error
 	if err != nil {
-		return &User{}, err
+		return err
 	}
 
-	return u, err
+	return err
 }
 
-func (u *User) Update(db *gorm.DB, id uuid.UUID) (*User, error) {
-	user := &User{}
-	db.Model(&User{}).Where("id = ?", id).Updates(u).Take(&user)
+func (u *User) Update(db *gorm.DB, id uuid.UUID) error {
+	err := db.Model(&User{}).Where("id = ?", id).Updates(u).Take(&u).Error
+	if err != nil {
+		return err
+	}
 
-	return user, nil
+	return err
 }
 
-func (u *User) FindById(db *gorm.DB, id uuid.UUID) (*User, error) {
+func (u *User) FindById(db *gorm.DB, id uuid.UUID) error {
 	err := db.Model(User{}).Where("id = ?", id).Take(&u).Error
 	if err != nil {
-		return &User{}, err
+		return err
 	}
 
-	return u, err
+	return err
 }
 
-func (u *User) FindAll(db *gorm.DB, pagination int, limit int) (*[]User, error) {
-	users := []User{}
-	err := db.Debug().Model(&User{}).Limit(limit).Offset(pagination * limit).Find(&users).Error
+func (u *User) FindAll(db *gorm.DB, us *[]User, pagination int, limit int) error {
+	err := db.Debug().Model(&User{}).Limit(limit).Offset(pagination * limit).Find(&us).Error
 	if err != nil {
-		return &[]User{}, err
+		return err
 	}
 
-	return &users, err
+	return err
 }
 
 func (u *User) Delete(db *gorm.DB, id uuid.UUID) error {
