@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -19,10 +21,38 @@ type Transaction struct {
 	ToUser   User      `gorm:"foreignKey:To"`
 }
 
+func (t *Transaction) Validate() error {
+	if t.Amount == 0 {
+		return errors.New("missing amount")
+	}
+
+	if t.CoinID.String() == "00000000-0000-0000-0000-000000000000" {
+		return errors.New("missing coin_id")
+	}
+
+	if t.From.String() == "00000000-0000-0000-0000-000000000000" {
+		return errors.New("missing from uuid")
+	}
+
+	if t.To.String() == "00000000-0000-0000-0000-000000000000" {
+		return errors.New("missing to uuid")
+	}
+
+	if t.Label == "" {
+		return errors.New("missing label")
+	}
+
+	return nil
+}
+
 func (t *Transaction) Create(db *gorm.DB, toUId, fromUId, cId uuid.UUID) error {
 	t.CoinID = cId
 	t.To = toUId
 	t.From = fromUId
+
+	if err := t.Validate(); err != nil {
+		return err
+	}
 
 	return db.Create(&t).Take(&t).Error
 }
