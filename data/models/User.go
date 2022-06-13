@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -14,7 +16,23 @@ type User struct {
 	Desc           string    `gorm:"size:255;" json:"desc"`
 }
 
+func (u *User) Validate() error {
+	if u.DisplayName == "" {
+		return errors.New("missing display_name")
+	}
+
+	if u.Tag == "" {
+		return errors.New("missing tag")
+	}
+
+	return nil
+}
+
 func (u *User) Create(db *gorm.DB) error {
+	if err := u.Validate(); err != nil {
+		return err
+	}
+
 	return db.Create(&u).Take(&u).Error
 }
 
