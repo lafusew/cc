@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -9,14 +11,38 @@ type Coin struct {
 	gorm.Model
 	ID                  uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
 	Name                string    `gorm:"size:18; not null" json:"name"`
-	ProfilePicture      string    `gorm:"size:200; not null" json:"profile_picture"`
+	ProfilePicture      string    `gorm:"size:200;" json:"profile_picture"`
 	TokenName           string    `gorm:"size:4; not null" json:"token_name"`
 	SubtokenName        string    `gorm:"size:18; not null" json:"subtoken_name"`
 	DefaultBalance      uint      `gorm:"not null" json:"default_balance"`
-	DefaultBalanceScale uint      `gorm:"not null" json:"default_balance_scale"`
+}
+
+
+
+func (c *Coin) Validate() error {
+	if c.Name == "" {
+		return errors.New("missing name")
+	}
+
+	if c.TokenName == "" {
+		return errors.New("missing token_name")
+	}
+
+	if c.SubtokenName == "" {
+		return errors.New("missing subtoken_name")
+	}
+
+	if c.DefaultBalance == 0 {
+		return errors.New("missing default_balance")
+	}
+	return nil
 }
 
 func (c *Coin) Create(db *gorm.DB) error {
+	if err := c.Validate(); err != nil {
+		return err
+	}
+
 	return db.Create(&c).Take(&c).Error
 }
 

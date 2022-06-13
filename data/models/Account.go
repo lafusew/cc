@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -26,9 +28,33 @@ type Account struct {
 	Scale     uint             `gorm:"not null" json:"scale"`
 }
 
+func (a *Account) Validate() error {
+	if a.CoinID.String() == "00000000-0000-0000-0000-000000000000" {
+		return errors.New("missing coin_id")
+	}
+
+	if a.UserID.String() == "00000000-0000-0000-0000-000000000000" {
+		return errors.New("missing user_id")
+	}
+
+	if a.Authority == "" {
+		return errors.New("missing account_authority")
+	}
+
+	if a.Name == "" {
+		return errors.New("missing name")
+	}
+
+	return nil
+}
+
 func (a *Account) Create(db *gorm.DB, uId, cId uuid.UUID) error {
 	a.CoinID = cId
 	a.UserID = uId
+
+	if err := a.Validate(); err != nil {
+		return err
+	}
 
 	return db.Create(&a).Take(&a).Error
 }

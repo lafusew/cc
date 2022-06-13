@@ -1,7 +1,7 @@
 package models
 
 import (
-	"time"
+	"errors"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -15,24 +15,43 @@ type Invite struct {
 	To       uuid.UUID `gorm:"not null" json:"to"`
 	ToCoin   Coin      `gorm:"foreignKey:To"`
 	Message  string    `gorm:"size:200; not null" json:"message"`
-	ExpireAt time.Time `gorm:"not null" json:"expire_at"`
 }
 
-func (a *Invite) Create(db *gorm.DB, uId, cId uuid.UUID) error {
-	a.To = cId
-	a.From = uId
+func (i *Invite) Validate() error {
+	if i.From.String() == "00000000-0000-0000-0000-000000000000" {
+		return errors.New("missing from uuid")
+	}
 
-	return db.Create(&a).Take(&a).Error
+	if i.To.String() == "00000000-0000-0000-0000-000000000000" {
+		return errors.New("missing to uuid")
+	}
+
+	if i.Message == "" {
+		return errors.New("missing message")
+	}
+
+	return nil
 }
 
-func (a *Invite) Update(db *gorm.DB, id uuid.UUID) error {
-	return db.Model(&Invite{}).Where("id = ?", id).Updates(a).Take(&a).Error
+func (i *Invite) Create(db *gorm.DB, uId, cId uuid.UUID) error {
+	i.To = cId
+	i.From = uId
+
+	if err := i.Validate(); err != nil {
+		return err
+	}
+
+	return db.Create(&i).Take(&i).Error
 }
 
-func (a *Invite) FindById(db *gorm.DB, id uuid.UUID) error {
-	return db.Model(&Invite{}).Where("id = ?", id).Take(&a).Error
+func (i *Invite) Update(db *gorm.DB, id uuid.UUID) error {
+	return db.Model(&Invite{}).Where("id = ?", id).Updates(i).Take(&i).Error
 }
 
-func (a *Invite) Delete(db *gorm.DB, id uuid.UUID) error {
-	return db.Delete(a, id).Error
+func (i *Invite) FindById(db *gorm.DB, id uuid.UUID) error {
+	return db.Model(&Invite{}).Where("id = ?", id).Take(&i).Error
+}
+
+func (i *Invite) Delete(db *gorm.DB, id uuid.UUID) error {
+	return db.Delete(i, id).Error
 }

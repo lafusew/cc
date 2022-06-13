@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -22,8 +24,29 @@ type Auth struct {
 	User     User
 }
 
+func (a *Auth) Validate() error {
+	if a.Username == "" {
+		return errors.New("missing username")
+	}
+
+	if a.Password == "" {
+		return errors.New("missing password")
+	}
+
+	if a.Type == MAGIC_LINK {
+		return errors.New("unsupported login method")
+	}
+
+	return nil
+}
+
 func (a *Auth) Create(db *gorm.DB, uID uuid.UUID) error {
 	a.UserID = uID
+
+	if err := a.Validate(); err != nil {
+		return err
+	}
+
 	return db.Create(&a).Take(&a).Error
 }
 
