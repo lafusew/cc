@@ -6,6 +6,8 @@ Print some currency out of thin air using **Central Coin**. A platform where any
 ## Todo
 
 - [ ] Data Validation before SQL query
+  - [x] Data validation on create
+  - [ ] Date validation on read/update/delete
 - [ ] Controllers
 - [ ] Error handling + appropriated status code and response
 - [ ] JWT Auth
