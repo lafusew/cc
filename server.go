@@ -14,11 +14,12 @@ var port = 8080
 func main() {
 	db := data.Connect(true)
 
-	uController := controllers.UserController {
-		Db: db,
-	}
+	uController := controllers.UserController {Db: db}
+	authController := controllers.AuthController {Db: db}
 
 	http.HandleFunc("/users/", uController.HandleUsers)
+	http.HandleFunc("/signup/", authController.HandleAuth)
+	http.HandleFunc("/signin/", authController.HandleAuth)
 
 	log.Printf("Server starting on port: %d\n", port)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
