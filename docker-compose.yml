@@ -24,6 +24,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - DATABASE_HOST=${DB_HOST}
+      - JWT_SECRET=${JWT_SECRET}
     build: .
     ports: 
       - 8080:8080 
