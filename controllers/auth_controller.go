@@ -38,7 +38,8 @@ func (c *AuthController) HandleAuth(w http.ResponseWriter, r *http.Request) {
 			a := &models.Auth{}
 			a.FindByIdentifier(c.Db, p.Identifier)
 
-			if (a.Identifier != p.Identifier || a.Password != p.Password) {
+			
+			if err := a.VerifyPassword(p.Password); err != nil{
 				w.WriteHeader(http.StatusForbidden)
 				w.Write([]byte("Wrong password or identifier"))
 				return

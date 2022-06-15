@@ -25,21 +25,20 @@ type Auth struct {
 	User     User
 }
 
-func Hash(password string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-}
-
-func VerifyPassword(hashedPassword, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-}
-
-func (a *Auth) Prepare() error {
-	hashedPassword, err := Hash(a.Password)
+func (a *Auth) HashPassword()  error {
+	hashed, err := bcrypt.GenerateFromPassword([]byte(a.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
-	a.Password = string(hashedPassword)
+
+
+	a.Password = string(hashed)
+
 	return nil
+}
+
+func (a *Auth) VerifyPassword(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(a.Password), []byte(password))
 }
 
 func (a *Auth) Validate() error {
@@ -62,6 +61,10 @@ func (a *Auth) Create(db *gorm.DB, uID uuid.UUID) error {
 	a.UserID = uID
 
 	if err := a.Validate(); err != nil {
+		return err
+	}
+
+	if err := a.HashPassword(); err != nil {
 		return err
 	}
 
