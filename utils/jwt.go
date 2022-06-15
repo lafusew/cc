@@ -19,7 +19,6 @@ type TokenInfo struct {
 type Claims struct {
 	jwt.RegisteredClaims
 	UserID uuid.UUID
-	CoinID uuid.UUID
 }
 
 func setExpiresIn(days time.Duration) time.Time {
@@ -29,14 +28,13 @@ func setExpiresIn(days time.Duration) time.Time {
 	return expirationTime
 }
 
-func IssueJWT(uid, cid uuid.UUID) (TokenInfo, error) {
+func IssueJWT(uid uuid.UUID) (TokenInfo, error) {
 	// Set expiration time, here defaulted to 30days
 	expirationTime := setExpiresIn(30)
 
 	// Create claims that will be in jwt payload
 	claims := &Claims{
 		UserID: uid,
-		CoinID: uid,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
