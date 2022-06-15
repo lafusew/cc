@@ -10,7 +10,7 @@ Print some currency out of thin air using **Central Coin**. A platform where any
   - [ ] Date validation on read/update/delete
 - [ ] Controllers
 - [ ] Error handling + appropriated status code and response
-- [ ] JWT Auth
+- [x] JWT Auth
 - [ ] Socket for New Transaction Emission
 
 ## API Routes 
