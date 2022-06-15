@@ -1,8 +1,8 @@
 version: '3'
 services:
-  fullstack-postgres:
+  pg:
       image: postgres:latest
-      container_name: full_db_postgres
+      container_name: pg_db
       environment:
         - POSTGRES_USER=${DB_USER}  
         - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -17,13 +17,14 @@ services:
       healthcheck:
         test: pg_isready -U postgres
 
-  app:
-    container_name: full_app
+  go:
+    container_name: go_app
     environment:
       - POSTGRES_USER=${DB_USER}  
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - DATABASE_HOST=${DB_HOST}
+      - JWT_SECRET=${JWT_SECRET}
     build: .
     ports: 
       - 8080:8080 
@@ -31,7 +32,7 @@ services:
     volumes:
       - api:/usr/src/app/
     depends_on:
-      fullstack-postgres:
+      pg:
         condition: service_healthy          
     networks:
       - fullstack
