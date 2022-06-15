@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -17,15 +18,32 @@ const (
 type Auth struct {
 	gorm.Model
 	ID       uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
-	Username string    `gorm:"size:50; not null" json:"username"`
+	Identifier string    `gorm:"size:50; not null" json:"identifier"`
 	Password string    `gorm:"size:50; not null" json:"password"`
-	Type     AuthType  `gorm:"type:auth_type; not null" json:"auth_type"`
+	Type     AuthType  `gorm:"type:auth_type; not null;default:'BASIC'" json:"auth_type"`
 	UserID   uuid.UUID `gorm:"not null" json:"user_id"`
 	User     User
 }
 
+func Hash(password string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+}
+
+func VerifyPassword(hashedPassword, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
+
+func (a *Auth) Prepare() error {
+	hashedPassword, err := Hash(a.Password)
+	if err != nil {
+		return err
+	}
+	a.Password = string(hashedPassword)
+	return nil
+}
+
 func (a *Auth) Validate() error {
-	if a.Username == "" {
+	if a.Identifier == "" {
 		return errors.New("missing username")
 	}
 
@@ -58,8 +76,8 @@ func (a *Auth) FindById(db *gorm.DB, id uuid.UUID) error {
 	return db.Model(&Auth{}).Where("id = ?", id).Take(&a).Error
 }
 
-func (a *Auth) FindByUsername(db *gorm.DB, name string) error {
-	return db.Model(&Auth{}).Where("username = ?", name).Take(&a).Error
+func (a *Auth) FindByIdentifier(db *gorm.DB, identifier string) error {
+	return db.Model(&Auth{}).Where("identifier = ?", identifier).Take(&a).Error
 }
 
 func (a *Auth) Delete(db *gorm.DB, id uuid.UUID) error {
