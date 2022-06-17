@@ -18,7 +18,7 @@ func main() {
 	uController := controllers.UserController {Db: db}
 	authController := controllers.AuthController {Db: db}
 
-	http.HandleFunc("/users/", middleware.SetMiddlewareAuthentication(uController.HandleUsers))
+	http.HandleFunc("/users/", middleware.Authentication(uController.HandleUsers))
 	http.HandleFunc("/signup/", authController.HandleAuth)
 	http.HandleFunc("/signin/", authController.HandleAuth)
 

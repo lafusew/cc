@@ -7,7 +7,7 @@ import (
 	"github.com/lafusew/cc/utils"
 )
 
-func SetMiddlewareAuthentication(next http.HandlerFunc) http.HandlerFunc {
+func Authentication(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bearerToken := r.Header.Get("Authorization")
 		var tokenStr string;
