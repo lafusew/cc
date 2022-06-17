@@ -23,17 +23,17 @@ func (c *UserController) HandleUsers(w http.ResponseWriter, r *http.Request) {
 		if parts[len(parts)-1] == "" {
 			users, err := c.GetAllUsers(0)
 			if err != nil {
-				utils.JsonResponse(w, err.Error())
+				utils.JsonResponse(w, http.StatusNotFound,err.Error())
 			}
 			
-			utils.JsonResponse(w, users)
+			utils.JsonResponse(w, http.StatusOK, users)
 			return
 		}
 		
 		u := &models.User{}
 		c.GetUserById(u ,parts[2])
 
-		utils.JsonResponse(w, u)
+		utils.JsonResponse(w, http.StatusOK, u)
 		return
 	case "POST":
 		u := &models.User{}
@@ -41,7 +41,7 @@ func (c *UserController) HandleUsers(w http.ResponseWriter, r *http.Request) {
 
 		c.PostUser(u)
 
-		utils.JsonResponse(w, u)
+		utils.JsonResponse(w, http.StatusOK, u)
 		return
 	case "PUT":
 		parts := strings.Split(r.URL.Path, "/")
@@ -50,14 +50,14 @@ func (c *UserController) HandleUsers(w http.ResponseWriter, r *http.Request) {
 
 		c.PutUser(u, parts[2])
 
-		utils.JsonResponse(w, u)
+		utils.JsonResponse(w, http.StatusOK, u)
 		return
 	case "DELETE":
 		parts := strings.Split(r.URL.Path, "/")
 		u := &models.User{}
 		err := c.DeleteUser(u, parts[2])
 		if err != nil {
-			utils.JsonResponse(w, map[string]interface{}{
+			utils.JsonResponse(w, http.StatusInternalServerError, map[string]interface{}{
 				"id": parts[2],
 				"deleted": false,
 				"error": err.Error(),
@@ -65,7 +65,7 @@ func (c *UserController) HandleUsers(w http.ResponseWriter, r *http.Request) {
 			return
 		} 
 
-		utils.JsonResponse(w, map[string]interface{}{
+		utils.JsonResponse(w, http.StatusOK, map[string]interface{}{
 			"id": parts[2],
 			"deleted": true,
 		})

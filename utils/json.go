@@ -31,7 +31,7 @@ func JsonToModel(r *http.Request, w http.ResponseWriter, v interface{}) {
 	}
 }
 
-func JsonResponse(w http.ResponseWriter, v interface{}) {
+func JsonResponse(w http.ResponseWriter, status int, v interface{}) {
 	jsonBytes, err := json.Marshal(v)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -39,6 +39,6 @@ func JsonResponse(w http.ResponseWriter, v interface{}) {
 	}
 
 	w.Header().Add("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(status)
 	w.Write(jsonBytes)
 }

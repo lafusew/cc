@@ -52,7 +52,7 @@ func (c *AuthController) HandleAuth(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			utils.JsonResponse(w, token)
+			utils.JsonResponse(w, http.StatusOK,token)
 			return
 		}
 
@@ -87,7 +87,7 @@ func (c *AuthController) HandleAuth(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			utils.JsonResponse(w, token)
+			utils.JsonResponse(w, http.StatusOK,token)
 		}
 		return
 	default:
