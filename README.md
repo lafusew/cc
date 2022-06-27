@@ -3,6 +3,10 @@
 Did you ever wanted to feel like the **Feds** or any **central bank**? We're here for you.  
 Print some currency out of thin air using **Central Coin**. A platform where anyone can create a **worthless currency**, invite friends and start trading it together.
 
+## REMEMBER
+
+Authorization is broke somewhere, I forget where tho.. TO BE FIXED!!
+
 ## Todo
 
 - [ ] Data Validation before SQL query
@@ -14,6 +18,9 @@ Print some currency out of thin air using **Central Coin**. A platform where any
 - [ ] Socket for New Transaction Emission
 
 ## API Routes 
+
+All routes are subjet to changes and will only match behavior needed for the v1 version of the app to work.
+An abstraction work should be done after the v1 works correctly.
 
 ### Auth
 All route should be protected by a JWT, the JWT must contain USER_ID, COIN_ID to be able to authorize or not some actions.
