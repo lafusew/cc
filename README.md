@@ -5,7 +5,7 @@ Print some currency out of thin air using **Central Coin**. A platform where any
 
 ## REMEMBER
 
-Authorization is broke somewhere, I forget where tho.. TO BE FIXED!!
+Authorization is broke somewhere, I forgot where tho.. TO BE FIXED!!
 
 ## Todo
 
